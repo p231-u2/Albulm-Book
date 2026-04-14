@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Love Memory Album Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --c: 0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        display: flex;
+        min-height: 100dvh;
+        perspective: 1000px;
+        font: 1em/1.4 "Poppins", sans-serif;
+        overflow: hidden;
+        color: hsl(180 68% 5%);
+        background-image: radial-gradient(
+          circle farthest-corner at 50% 50%,
+          hsl(187 20% 88%) 30%,
+          hsl(149 20% 94%) 100%
+        );
+      }
+
+      .book {
+        position: relative;
+        display: flex;
+        margin: auto;
+        width: min(40cqmin, 86vw);
+        height: min(86vh, 68rem);
+        pointer-events: none;
+        transform-style: preserve-3d;
+        transition: translate 1s;
+        translate: calc(min(var(--c), 1) * 50%) 0%;
+        rotate: 1 0 0 30deg;
+        counter-reset: page -1;
+      }
+
+      .page {
+        --thickness: 4;
+        flex: none;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        font-size: clamp(0.68rem, 1.8cqmin, 1rem);
+        pointer-events: all;
+        user-select: none;
+        transform-style: preserve-3d;
+        transform-origin: left center;
+        transition:
+          transform 1s,
+          rotate 1s ease-in calc((min(var(--i), var(--c)) - max(var(--i), var(--c))) * 50ms);
+        translate: calc(var(--i) * -100%) 0px 0px;
+        transform: translateZ(calc((var(--c) - var(--i) - 0.5) * calc(var(--thickness) * 0.23cqmin)));
+        rotate: 0 1 0 calc(clamp(0, var(--c) - var(--i), 1) * -180deg);
+        box-shadow: 0em 0.5em 1em -0.2em #00000020;
+      }
+
+      .front,
+      .back {
+        position: relative;
+        flex: none;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: #fff;
+        translate: 0px;
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 1.6rem;
+        border: 1px solid #0002;
+        scrollbar-width: thin;
+      }
+
+      .back {
+        translate: -100% 0;
+        rotate: 0 1 0 180deg;
+      }
+
+      .front::after,
+      .back::after {
+        position: absolute;
+        bottom: 0.8rem;
+        counter-increment: page;
+        content: counter(page) ".";
+        font-size: 0.75em;
+        color: #455;
+      }
+
+      .cover::after {
+        content: "";
+      }
+
+      .front::after {
+        right: 1rem;
+      }
+
+      .back::after {
+        left: 1rem;
+      }
+
+      .front {
+        background: linear-gradient(to left, #f7f7f7 80%, #eee 100%);
+        border-radius: 0.1em 0.5em 0.5em 0.1em;
+      }
+
+      .back {
+        background-image: linear-gradient(to right, #f7f7f7 80%, #eee 100%);
+        border-radius: 0.5em 0.1em 0.1em 0.5em;
+      }
+
+      .cover {
+        background: radial-gradient(
+            circle farthest-corner at 80% 20%,
+            hsl(150 80% 20% / 0.3) 0%,
+            hsl(170 60% 10% / 0.1) 100%
+          ),
+          linear-gradient(125deg, #3a255d, #0f766e 60%, #1e293b 100%);
+        color: hsl(200 30% 98%);
+        justify-content: center;
+      }
+
+      .cover h1 {
+        font-family: "Caveat", cursive;
+        font-size: clamp(2rem, 3.6vw, 3.4rem);
+        margin: 0;
+      }
+
+      .cover h2 {
+        font-weight: 400;
+        margin: 0;
+        opacity: 0.9;
+      }
+
+      .note {
+        font-family: "Caveat", cursive;
+        font-size: clamp(1.1rem, 1.6vw, 1.6rem);
+        line-height: 1.3;
+        background: #ffffffbe;
+        color: #1f2937;
+        border-left: 4px solid #e11d48;
+        padding: 0.7rem 0.9rem;
+        border-radius: 0.5rem;
+      }
+
+      .layout {
+        min-height: 125%;
+        display: grid;
+        gap: 0.9rem;
+        align-content: start;
+      }
+
+      .layout.duo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .layout.single {
+        grid-template-columns: 1fr;
+      }
+
+      .layout.triplet {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .title {
+        margin: 0;
+        font-size: 1.1em;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .frame {
+        display: grid;
+        place-content: center;
+        min-height: 10rem;
+        padding: 0.8rem;
+        color: #111827;
+        font-weight: 600;
+        text-align: center;
+        background: #f8fafc;
+      }
+
+      .f1 { border: 4px double #ec4899; border-radius: 20px 4px; transform: rotate(-1deg); }
+      .f2 { border: 3px dashed #f59e0b; border-radius: 999px; }
+      .f3 { clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%); background: linear-gradient(120deg, #dbeafe, #fdf2f8); border: 3px solid #6366f1; }
+      .f4 { border: 5px groove #10b981; border-radius: 8px; box-shadow: inset 0 0 0 5px #fff; }
+      .f5 { border: 3px solid #1d4ed8; border-radius: 50% 20% 40% 20%; }
+      .f6 { border: 4px solid #dc2626; outline: 3px dotted #fca5a5; outline-offset: -10px; }
+      .f7 { border: 0; border-left: 8px solid #9333ea; border-top: 8px solid #14b8a6; border-radius: 18px; background: #f5f3ff; }
+      .f8 { border: 4px ridge #f97316; border-radius: 14px; transform: rotate(1.4deg); }
+      .f9 { border: 3px dashed #0891b2; border-radius: 0 24px 0 24px; }
+      .f10 { border: 4px solid transparent; border-image: linear-gradient(45deg,#e11d48,#8b5cf6,#06b6d4) 1; }
+      .f11 { border: 2px solid #111827; box-shadow: 8px 8px 0 #fcd34d; }
+      .f12 { border: 4px dotted #65a30d; border-radius: 16px 16px 36px 16px; }
+      .f13 { border: 3px solid #0f766e; background: repeating-linear-gradient(45deg,#ecfeff,#ecfeff 10px,#cffafe 10px,#cffafe 20px); }
+      .f14 { border: 5px double #be185d; border-radius: 12px; box-shadow: 0 0 0 6px #fce7f3 inset; }
+      .f15 { border: 3px solid #4b5563; border-radius: 100% 100% 0 0; background: linear-gradient(to bottom,#f8fafc,#e5e7eb); }
+
+      .hint {
+        position: fixed;
+        bottom: 1rem;
+        left: 50%;
+        translate: -50% 0;
+        background: #0f172acc;
+        color: #fff;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
+      }
+
+      @media (max-width: 760px) {
+        .book { width: min(90vw, 26rem); height: 88vh; }
+        .layout.duo, .layout.triplet { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="book" id="book">
+      <article class="page" style="--i:0">
+        <section class="front cover">
+          <h1>Love Memory Album</h1>
+          <h2>Our moments, forever scrollable ✨</h2>
+          <p class="note">Aapka hi kehna banta~a</p>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 1 · First Whisper</h3>
+          <p class="note">Keh~do~na</p>
+          <div class="layout single">
+            <div class="frame f1">Add Photo 01</div>
+          </div>
+        </section>
+      </article>
+
+      <article class="page" style="--i:1">
+        <section class="front">
+          <h3 class="title">Page 2 · Blush & Bloom</h3>
+          <p class="note">Main sharma ke keh dungi~i</p>
+          <div class="layout duo">
+            <div class="frame f2">Add Photo 02</div>
+            <div class="frame f3">Add Photo 03</div>
+          </div>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 3 · Heartfelt Promise</h3>
+          <p class="note">Maine bhi dil diya~a</p>
+          <div class="layout single">
+            <div class="frame f4">Add Photo 04</div>
+          </div>
+        </section>
+      </article>
+
+      <article class="page" style="--i:2">
+        <section class="front">
+          <h3 class="title">Page 4 · Eye Contact Stories</h3>
+          <p class="note">Aankhon ankhon ka masla</p>
+          <div class="layout triplet">
+            <div class="frame f5">Add Photo 05</div>
+            <div class="frame f6">Add Photo 06</div>
+            <div class="frame f7">Add Photo 07</div>
+          </div>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 5 · Sweetly Right</h3>
+          <p class="note">Achha~tha</p>
+          <div class="layout single">
+            <div class="frame f8">Add Photo 08</div>
+          </div>
+        </section>
+      </article>
+
+      <article class="page" style="--i:3">
+        <section class="front">
+          <h3 class="title">Page 6 · Belonging</h3>
+          <p class="note">Ab le jao apna bana ke</p>
+          <div class="layout duo">
+            <div class="frame f9">Add Photo 09</div>
+            <div class="frame f10">Add Photo 10</div>
+          </div>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 7 · My Jaan</h3>
+          <p class="note">Mujhe meri ja~~an</p>
+          <div class="layout single">
+            <div class="frame f11">Add Photo 11</div>
+          </div>
+        </section>
+      </article>
+
+      <article class="page" style="--i:4">
+        <section class="front">
+          <h3 class="title">Page 8 · Repeat the Melody</h3>
+          <p class="note">Aapka hi kehna banta~a · Keh~do~na</p>
+          <div class="layout duo">
+            <div class="frame f12">Add Photo 12</div>
+            <div class="frame f13">Add Photo 13</div>
+          </div>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 9 · We Said It Together</h3>
+          <p class="note">Main sharma ke keh dungi~i · Maine bhi dil diya~a</p>
+          <div class="layout single">
+            <div class="frame f14">Add Photo 14</div>
+          </div>
+        </section>
+      </article>
+
+      <article class="page" style="--i:5">
+        <section class="front">
+          <h3 class="title">Page 10 · Eyes, Hearts, Forever</h3>
+          <p class="note">Aankhon ankhon ka masla · Achha~tha</p>
+          <div class="layout single">
+            <div class="frame f15">Add Photo 15</div>
+          </div>
+        </section>
+        <section class="back">
+          <h3 class="title">Page 11 · Love Note</h3>
+          <p class="note">Ab le jao apna bana ke · Mujhe meri ja~~an</p>
+          <p>
+            Keep adding your own photos to every frame. Every side is vertically scrollable,
+            so you can expand with captions, dates, and little memories.
+          </p>
+        </section>
+      </article>
+
+      <article class="page" style="--i:6">
+        <section class="front cover">
+          <h1>Our Forever</h1>
+          <h2>Back Cover · Love Memory Design</h2>
+          <p class="note">Mujhe meri ja~~an 💞</p>
+        </section>
+        <section class="back cover">
+          <h1>The End</h1>
+          <h2>And the beginning of more memories</h2>
+        </section>
+      </article>
+    </main>
+
+    <div class="hint">Click right side to flip forward, left side to flip back.</div>
+
+    <script>
+      const book = document.getElementById("book");
+      const pages = [...book.querySelectorAll(".page")];
+      let current = 0;
+
+      const setCurrent = (value) => {
+        current = Math.max(0, Math.min(value, pages.length - 1));
+        book.style.setProperty("--c", current);
+      };
+
+      pages.forEach((page, index) => {
+        page.addEventListener("click", (event) => {
+          const rect = page.getBoundingClientRect();
+          const isRightHalf = event.clientX > rect.left + rect.width / 2;
+          if (isRightHalf) {
+            setCurrent(index + 1);
+          } else {
+            setCurrent(index - 1);
+          }
+        });
+      });
+
+      setCurrent(0);
+    </script>
+  </body>
+</html>
